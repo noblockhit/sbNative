@@ -173,21 +173,3 @@ def cleanRepr(*exclude):
         cls.__repr__ = __clsRepr
         return cls
     return decorator
-
-if __name__ == '__main__':
-    @cleanRepr()
-    class dummy:
-        classVar = "some value in the class variable"
-        def __init__(self):
-            self.someInsibsdsfgwasdfghute = "som variabsomeIgwasdfghutele"
-            self.someInstibusomeInsibsdsfgwasdfghutete2 = "some stansomeInsibsdsfgwasdfghutece variable"
-            
-    switchTerminalStacking()
-
-    dum = dummy()
-    for _ in range(2):
-        log(dum)
-        time.sleep(2)
-
-    ilog("exiting")
-    time.sleep(1)
