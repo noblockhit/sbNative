@@ -3,7 +3,6 @@ import os
 import time
 import atexit
 import typing
-from collections.abc import Sequence, Iterable
 
 global terminalStacking
 terminalStacking = False
@@ -40,7 +39,7 @@ def switchTerminalStacking():
     return terminalStacking
 
 
-def computeLinebreakIndents(args: object, indentStartEnd: typing.Union[str, Sequence[str, str]] = None):
+def computeLinebreakIndents(args: object, indentStartEnd: typing.Union[str, typing.Sequence[typing.Tuple[str, str]]] = None):
     '''Used for clean representation of e.g. Lists (indentStartEnd = "[]") if multiple lines are necessary. If `indentStartEnd` is `None` all the arguments will be combined to a list of newlines. IndentStartEnd must be a 2 item sequence of single characters. Multi Character support might be supported in the future.'''
     ret = []
 
@@ -126,7 +125,7 @@ def __baseLoggingFunc(
     logString += f"{argStr}{end}{arrow}{path}"
 
     if terminalStacking:
-        print(logString, end="\r")
+        print(logString.split("\n")[-1], end="\r")
         prevLog = [logString, 1]
     else:
         print(logString)
@@ -190,7 +189,7 @@ def isFromCall(funcName: str):
     return funcName in funcs
 
 
-def cleanRepr(*exclude: Iterable[str]):
+def cleanRepr(*exclude: typing.Iterable[str]):
     '''A decorator which makes the representation of your class as clean as possible. If you don't want specific class or instance variables to be included, you may specify them as arguments for this function.'''
     def decorator(cls):
         cls.__excludeReprVarNames__ = exclude
