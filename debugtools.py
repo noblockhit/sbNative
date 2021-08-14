@@ -24,7 +24,9 @@ prevLog = ["", 1]
 
 
 def switchTerminalStacking():
-    '''Terminalstacking is a feature that prevents the logging function from spamming the terminal with useless information. If the same things are logged in the same line, file, back to back and this feature is enabled, the information will not be printed again, it will rather "edit" the existing line and add `[2x]` `[3x]` `[4x]` ... `[nx]` after the location of the log.'''
+    '''Terminalstacking is a feature that prevents the logging function from spamming the terminal with useless information.
+    If the same things are logged in the same line, file, back to back and this feature is enabled, the information will not be printed again,
+    it will rather "edit" the existing line and add `[2x]` `[3x]` `[4x]` ... `[nx]` after the location of the log.'''
     global terminalStacking
     terminalStacking = not terminalStacking
     if not terminalStacking:
@@ -40,7 +42,9 @@ def switchTerminalStacking():
 
 
 def computeLinebreakIndents(args: object, indentStartEnd: typing.Union[str, typing.Sequence[typing.Tuple[str, str]]] = None):
-    '''Used for clean representation of e.g. Lists (indentStartEnd = "[]") if multiple lines are necessary. If `indentStartEnd` is `None` all the arguments will be combined to a list of newlines. IndentStartEnd must be a 2 item sequence of single characters. Multi Character support might be supported in the future.'''
+    '''Used for clean representation of e.g. Lists (indentStartEnd = "[]") if multiple lines are necessary.
+    If `indentStartEnd` is `None` all the arguments will be combined to a list of newlines.
+    IndentStartEnd must be a 2 item sequence of single characters. Multi Character support might be supported in the future.'''
     ret = []
 
     currIndentLvl = 0
@@ -69,7 +73,9 @@ def __baseLoggingFunc(
         maxOccupyableWidthPortion: float,
         end: str,
         *args: object):
-    '''This is the base of the logging function, like `log` and `ilog` (infolog). It is almost redundant to use this, because the `log` and `ilog` functions will likely satisfy your needs.'''
+    '''This is the base of the logging function,
+    like `log` and `ilog` (infolog). It is almost redundant to use this,
+    because the `log` and `ilog` functions will likely satisfy your needs.'''
     global terminalStacking
 
     call = inspect.getframeinfo(inspect.stack()[tracebackDepth][0])
@@ -132,12 +138,14 @@ def __baseLoggingFunc(
 
 
 def log(*args: object, depth: int = 2):
-    '''Prints all the arguments given to the console and the file + line of the call. Supports more advanced logging when paired with the `cleanRepr` class decorator.'''
+    '''Prints all the arguments given to the console and the file + line of the call.
+    Supports more advanced logging when paired with the `cleanRepr` class decorator.'''
     __baseLoggingFunc(None, depth, " | ", .9, "", *args)
 
 
 def ilog(info: object, *args: object, depth: int = 2, end: str = ""):
-    '''Prints all the arguments given to the console and the file + line of the call. First argument will be used to represent what is logged. Supports more advanced logging when paired with the `cleanRepr` class decorator.'''
+    '''Prints all the arguments given to the console and the file + line of the call.
+    First argument will be used to represent what is logged. Supports more advanced logging when paired with the `cleanRepr` class decorator.'''
     __baseLoggingFunc(info, depth, " | ", .9, end, *args)
 
 
@@ -153,7 +161,8 @@ def timer(func: callable):
 
 
 def __clsRepr(cls: type):
-    '''This is what the `__repr__` method of the class decorated with `cleanRepr` decorator is replaced with. Supports newlines with the logging functions.'''
+    '''This is what the `__repr__` method of the class decorated with `cleanRepr` decorator is replaced with.
+    Supports newlines with the logging functions.'''
     isLogCall = isFromCall("log")
     ret = f"{type(cls).__name__}("
 
@@ -184,7 +193,8 @@ def __clsRepr(cls: type):
 
 
 def isFromCall(funcName: str):
-    '''Gets if a function with the name `funcName` is in the callstack. Used by `__clsRepr` to determine if it should add markers in the form of `\\p` where newlines can be added if the logging string is too long.'''
+    '''Gets if a function with the name `funcName` is in the callstack.
+    Used by `__clsRepr` to determine if it should add markers in the form of `\\p` where newlines can be added if the logging string is too long.'''
     funcs = [c.function for c in inspect.stack()]
     return funcName in funcs
 
