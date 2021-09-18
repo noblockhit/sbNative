@@ -1,5 +1,5 @@
 import inspect
-import os
+import os,sys
 import time
 import atexit
 import typing
@@ -169,7 +169,7 @@ def timer(func: callable):
         ilog(f"Executing `{func.__name__}` took",
              time.time() - begin, depth=3, end=" seconds")
         return ret
-        
+
     return wrapper
 
 
@@ -227,3 +227,20 @@ def cleanRepr(*exclude: typing.Iterable[str]):
         return cls
 
     return decorator
+
+
+def getTerminalOutputs(func: typing.Callable, *args, **kwargs):
+    originalStdout = sys.stdout
+
+    with open('terminalOutputTest.temp', 'w') as f:
+        sys.stdout = f
+        func(*args, **kwargs)
+        sys.stdout = originalStdout
+
+    with open('terminalOutputTest.temp', 'r') as f:
+        ret = f.read()
+
+    os.remove('terminalOutputTest.temp')
+    return ret
+
+print(getTerminalOutputs(log, "hello"))
