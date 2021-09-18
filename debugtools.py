@@ -229,18 +229,18 @@ def cleanRepr(*exclude: typing.Iterable[str]):
     return decorator
 
 
-def getTerminalOutputs(func: typing.Callable, *args, **kwargs):
+def getTerminalOutputs(func: typing.Callable, *args, **kwargs) -> typing.Tuple[str,object]:
+    '''Returns the terminal output content recorded while the function was running, and the result from the function in a tuple.
+    (TerminalOutput,FunctionResult)'''
     originalStdout = sys.stdout
 
     with open('terminalOutputTest.temp', 'w') as f:
         sys.stdout = f
-        func(*args, **kwargs)
+        funcResult = func(*args, **kwargs)
         sys.stdout = originalStdout
 
     with open('terminalOutputTest.temp', 'r') as f:
         ret = f.read()
 
     os.remove('terminalOutputTest.temp')
-    return ret
-
-print(getTerminalOutputs(log, "hello"))
+    return ret,funcResult
