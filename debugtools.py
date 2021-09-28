@@ -244,3 +244,8 @@ def getTerminalOutputs(func: typing.Callable, *args, **kwargs) -> typing.Tuple[s
 
     os.remove('terminalOutputTest.temp')
     return ret,funcResult
+
+def globaliseAllSubitems(destFileGlobals,packageToUnpack,forceall=False):
+    for name,g in inspect.getmembers(packageToUnpack):
+        if not forceall and name.startswith("_"):continue
+        destFileGlobals[name] = g
