@@ -206,6 +206,10 @@ def __clsRepr(cls: type):
         return ret + ")"
     return ret[:remvLastChars] + ")"
 
+def __clsLog(self, *args):
+    if len(args) == 0:
+        return log(self, depth=3)
+    return ilog(self, *args, depth=3)
 
 def isFromCall(funcName: str):
     '''
@@ -224,6 +228,7 @@ def cleanRepr(*exclude: typing.Iterable[str]):
     def decorator(cls):
         cls.__excludeReprVarNames__ = exclude
         cls.__repr__ = __clsRepr
+        cls.log = __clsLog
         return cls
 
     return decorator
