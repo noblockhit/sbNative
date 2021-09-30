@@ -1,0 +1,30 @@
+Metadata-Version: 2.1
+Name: sbNative
+Version: 0.0.1
+Summary: A packe for all things that should be native
+Home-page: https://github.com/pypa/sampleproject
+Author: Example Author
+Author-email: noblockclutch@gmail.com
+License: UNKNOWN
+Project-URL: Bug Tracker, https://github.com/noblockhit/sbNative
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Requires-Python: >=3.6
+Description-Content-Type: text/markdown
+License-File: LICENSE
+
+# SbNative
+An extention to python for debugging and such. Things that, well `Should Be Native`
+
+
+## SbNative may be used for
+  - private projects.
+  - public projects (The SbNative repo must be referenced in a Readme in case the source code is available.)
+
+DO NOT DISTRIBUTE.
+
+ALL NON MENTIONED RIGHTS RESERVED.
+
+

@@ -1,0 +1,10 @@
+LICENSE
+README.md
+pyproject.toml
+setup.cfg
+src/sbNative/__init__.py
+src/sbNative/debugtools.py
+src/sbNative.egg-info/PKG-INFO
+src/sbNative.egg-info/SOURCES.txt
+src/sbNative.egg-info/dependency_links.txt
+src/sbNative.egg-info/top_level.txt
