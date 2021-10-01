@@ -7,3 +7,5 @@ setup.cfg
 
 __pycache__/*
 __pycache__
+
+test/*
