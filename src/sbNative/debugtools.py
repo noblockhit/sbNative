@@ -9,6 +9,9 @@ terminalStacking = False
 
 global prevLogInfo
 global prevLog
+global lineSplitSign
+
+lineSplitSign = "\uF8FF"
 
 prevLogInfo = {
     "infoName": None,
@@ -57,8 +60,8 @@ def computeLinebreakIndents(args: object, indentStartEnd: typing.Union[str, typi
         srt, end = indentStartEnd
         for a in args:
             lnsUnsplitted = str(a).replace(
-                srt, srt + "\p").replace(end, "\p" + end).replace(end + ", ", end + ",\p")
-            lines = lnsUnsplitted.split("\p")
+                srt, srt + lineSplitSign).replace(end, lineSplitSign + end).replace(end + ", ", end + f",{lineSplitSign}")
+            lines = lnsUnsplitted.split(lineSplitSign)
             for l in lines:
                 currIndentLvl -= l.count(end) * 4
                 ret.append(" " * currIndentLvl + l)
@@ -132,7 +135,7 @@ def __baseLoggingFunc(
         argStrings = computeLinebreakIndents(argStrings, "[]")
         argStrings = computeLinebreakIndents(argStrings, "{}")
 
-    argStr = separator.join(argStrings).replace("\p", "")
+    argStr = separator.join(argStrings).replace(lineSplitSign, "")
 
     logString += f"{argStr}{end}{arrow}{path}"
 
@@ -190,12 +193,12 @@ def __clsRepr(cls: type):
 
         ret += f"{repr(k)}: {repr(v)}, "
         if isLogCall:
-            ret += "\p"
+            ret += lineSplitSign
 
     if len(subObjects) == 0:
         return ret + ")"
 
-    ret = ret.strip("\p")
+    ret = ret.strip(lineSplitSign)
 
     remvLastChars = -1
 
@@ -214,7 +217,7 @@ def __clsLog(self, *args):
 def isFromCall(funcName: str):
     '''
     Gets if a function with the name `funcName` is in the callstack.
-    Used by `__clsRepr` to determine if it should add markers in the form of `\\p` where newlines can be added if the logging string is too long.
+    Used by `__clsRepr` to determine if it should add markers in the form of `\\uF8FF` where newlines can be added if the logging string is too long.
     '''
     funcs = [c.function for c in inspect.stack()]
     return funcName in funcs
