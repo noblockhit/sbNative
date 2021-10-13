@@ -2,6 +2,8 @@ import sys,os
 import inspect
 import pathlib
 import traceback
+import typing
+import types
 
 def getPath():
     if sys.executable.endswith("python.exe"):
@@ -33,3 +35,12 @@ def execWithExcTb(cmd, globals=None, locals=None, description='source string'):
     else:
         return
     raise InterpreterError("%s at line %d of %s: %s" % (error_class, line_number, description, detail))
+
+def safeIter(itr: typing.Sequence) -> types.GeneratorType:
+    '''Warning, very slow with large iterators.'''
+    i = 0
+    while i < len(itr):
+        item = itr[i]
+        yield item
+        if len(itr) <= i or itr[i] == item:
+            i += 1
