@@ -4,7 +4,7 @@ import inspect
 import pathlib
 import traceback
 import typing
-
+import types
 
 def getPath():
     if sys.executable.endswith("python.exe"):
@@ -58,3 +58,12 @@ def castToTypeHint(func, *args, **kwargs) -> typing.Tuple[typing.Callable, list,
         atIdx += 1
 
     return retArgs,retKwargs
+
+def safeIter(itr: typing.Sequence) -> types.GeneratorType:
+    '''Warning, very slow with large iterators.'''
+    i = 0
+    while i < len(itr):
+        item = itr[i]
+        yield item
+        if len(itr) <= i or itr[i] == item:
+            i += 1
