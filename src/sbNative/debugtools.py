@@ -217,7 +217,7 @@ def __clsLog(self, *args):
 def isFromCall(funcName: str):
     '''
     Gets if a function with the name `funcName` is in the callstack.
-    Used by `__clsRepr` to determine if it should add markers in the form of `\\uF8FF` where newlines can be added if the logging string is too long.
+    Used by `__clsRepr` to determine if it should add markers in the form of `lignSplitSign` where newlines can be added if the logging string is too long.
     '''
     funcs = [c.function for c in inspect.stack()]
     return funcName in funcs
