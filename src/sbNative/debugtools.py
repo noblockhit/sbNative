@@ -1,8 +1,12 @@
 import inspect
-import os,sys
+import os
+import sys
 import time
 import atexit
 import typing
+import itertools
+from enum import Enum
+
 
 global terminalStacking
 terminalStacking = False
@@ -26,7 +30,7 @@ prevLogInfo = {
 prevLog = ["", 1]
 
 
-def switchTerminalStacking():
+def switchTerminalStacking() -> bool:
     '''
     Terminalstacking is a feature that prevents the logging function from spamming the terminal with useless information.
     If the same things are logged in the same line, file, back to back and this feature is enabled, the information will not be printed again,
@@ -46,7 +50,7 @@ def switchTerminalStacking():
     return terminalStacking
 
 
-def computeLinebreakIndents(args: object, indentStartEnd: typing.Union[str, typing.Sequence[typing.Tuple[str, str]]] = None):
+def computeLinebreakIndents(args: object, indentStartEnd: typing.Union[str, typing.Sequence[typing.Tuple[str, str]]] = None) -> list:
     '''
     Used for clean representation of e.g. Lists (indentStartEnd = "[]") if multiple lines are necessary.
     If `indentStartEnd` is `None` all the arguments will be combined to a list of newlines.
@@ -79,7 +83,7 @@ def __baseLoggingFunc(
         separator: str,
         maxOccupyableWidthPortion: float,
         end: str,
-        *args: object):
+        *args: object) -> None:
     '''
     This is the base of the logging function,
     like `log` and `ilog` (infolog). It is almost redundant to use this,
@@ -146,7 +150,7 @@ def __baseLoggingFunc(
         print(logString)
 
 
-def log(*args: object, depth: int = 2):
+def log(*args: object, depth: int = 2) -> None:
     '''
     Prints all the arguments given to the console and the file + line of the call.
     Supports more advanced logging when paired with the `cleanRepr` class decorator.
@@ -154,7 +158,7 @@ def log(*args: object, depth: int = 2):
     __baseLoggingFunc(None, depth, " | ", .9, "", *args)
 
 
-def ilog(info: object, *args: object, depth: int = 2, end: str = ""):
+def ilog(info: object, *args: object, depth: int = 2, end: str = "") -> None:
     '''
     Prints all the arguments given to the console and the file + line of the call.
     First argument will be used to represent what is logged. Supports more advanced logging when paired with the `cleanRepr` class decorator.
@@ -162,21 +166,7 @@ def ilog(info: object, *args: object, depth: int = 2, end: str = ""):
     __baseLoggingFunc(info, depth, " | ", .9, end, *args)
 
 
-def timer(func: callable):
-    '''
-    A simple decorator for timing the execution time of a function or method. Flexes the `ilog` function.
-    '''
-    def wrapper(*args, **kwargs):
-        begin = time.time()
-        ret = func(*args, **kwargs)
-        ilog(f"Executing `{func.__name__}` took",
-             time.time() - begin, depth=3, end=" seconds")
-        return ret
-
-    return wrapper
-
-
-def __clsRepr(cls: type):
+def __clsRepr(cls: type) -> type:
     '''
     This is what the `__repr__` method of the class decorated with `cleanRepr` decorator is replaced with.
     Supports newlines with the logging functions.
@@ -209,12 +199,14 @@ def __clsRepr(cls: type):
         return ret + ")"
     return ret[:remvLastChars] + ")"
 
-def __clsLog(self, *args):
+
+def __clsLog(self, *args) -> object:
     if len(args) == 0:
         return log(self, depth=3)
     return ilog(self, *args, depth=3)
 
-def isFromCall(funcName: str):
+
+def isFromCall(funcName: str) -> bool:
     '''
     Gets if a function with the name `funcName` is in the callstack.
     Used by `__clsRepr` to determine if it should add markers in the form of `lignSplitSign` where newlines can be added if the logging string is too long.
@@ -223,7 +215,7 @@ def isFromCall(funcName: str):
     return funcName in funcs
 
 
-def cleanRepr(*exclude: typing.Iterable[str]):
+def cleanRepr(*exclude: typing.Iterable[str]) -> type:
     '''
     A decorator which makes the representation of your class as clean as possible.
     If you don't want specific class or instance variables to be included, you may specify them as arguments for this function.
@@ -237,7 +229,7 @@ def cleanRepr(*exclude: typing.Iterable[str]):
     return decorator
 
 
-def getTerminalOutputs(func: typing.Callable, *args, **kwargs) -> typing.Tuple[str,object]:
+def getTerminalOutputs(func: typing.Callable, *args, **kwargs) -> typing.Tuple[str, object]:
     '''Returns the terminal output content recorded while the function was running, and the result from the function in a tuple.
     (TerminalOutput,FunctionResult)'''
     originalStdout = sys.stdout
@@ -251,4 +243,122 @@ def getTerminalOutputs(func: typing.Callable, *args, **kwargs) -> typing.Tuple[s
         ret = f.read()
 
     os.remove('terminalOutputTest.temp')
-    return ret,funcResult
+    return ret, funcResult
+
+
+def plotTuples(plt, tups, title="", xaxisName="", yaxisName="") -> None:
+    valsOld = list(zip(*tups))
+
+    vals = [tuple([str(i) if type(i) not in [str, int, float]
+                  else i for i in row]) for row in valsOld]
+
+    if vals != valsOld:
+        print("WARNING: CASTED ITEMS IN THE TUPLE TO BE COMPREHENSABLE TO MATPLOTLIB")
+        print(valsOld)
+        print("-->")
+        print(vals)
+
+    if any(type(v) not in [str, int, float] for v in itertools.chain(*vals)):
+        raise TypeError(
+            "Attributes in x or y which are not strings, integers or floats!")
+
+    plt.plot(*vals)
+    plt.title(title)
+    plt.xlabel(xaxisName)
+    plt.ylabel(yaxisName)
+
+
+def timer(func: callable) -> typing.Callable:
+    '''
+    A simple decorator for timing the execution time of a function or method. Flexes the `ilog` function.
+    '''
+    def wrapper(*args, **kwargs):
+        begin = time.time()
+        ret = func(*args, **kwargs)
+        ilog(f"Executing `{func.__name__}` took",
+             time.time() - begin, depth=3, end=" seconds")
+        return ret
+
+    return wrapper
+
+
+class tPlotArgs(Enum):
+    TIME = 1
+    ARGS = 2
+
+
+class timePlotter:
+    def __init__(self, sortAfter: typing.Union[tPlotArgs, tPlotArgs], trackArgs: typing.Sequence[int] = [], trackKwargs: typing.Sequence[str] = [], reverse=False):
+        if "matplotlib" not in sys.modules:
+            from matplotlib import pyplot as plt
+
+        self.callArgsAndTimes = []
+        self.sortAfter = sortAfter
+        self.reverse = reverse
+        self.plt = plt
+        self.func = None
+        self.trackArgs = trackArgs
+        self.trackKwargs = trackKwargs
+
+
+    def timer(self, func: callable):
+        '''
+        A simple decorator for timing the execution time of a function or method. Uses matplotlib to show the time with arguments for the called function.
+        '''
+        if self.func is None:
+            self.func = func
+        
+        else:
+            if self.func is not func:
+                raise RuntimeError("You may not call different functions with the same timing instance.")        
+
+        def wrapper(*args, **kwargs):
+            begin = time.time()
+            ret = func(*args, **kwargs)
+
+            self.callArgsAndTimes.append(
+                    {"deltaT": time.time() - begin, "args": args, "kwargs": kwargs}
+                )
+            return ret
+
+        return wrapper
+
+
+    def show(self):
+        if self.func is None:
+            raise RuntimeError(f"A function was never called with this timePlotting instance.")
+
+        tuples = []
+        for i in self.callArgsAndTimes:
+            argsAndKwargs = ""
+
+            argsToPlot = tuple(a for idx,a in enumerate(i['args']) if idx in self.trackArgs)
+            if str(argsToPlot) != "()":
+                argsAndKwargs += str(argsToPlot)
+
+            kwargsToPlot = {name:kwa for name,kwa in i['kwargs'].items() if name in self.trackKwargs}
+            if str(kwargsToPlot) != "{}":
+                argsAndKwargs += str(kwargsToPlot)
+
+            if self.sortAfter is tPlotArgs.ARGS:
+                tuples.append((argsAndKwargs, i["deltaT"]))
+
+            elif self.sortAfter is tPlotArgs.TIME:
+                tuples.append((i["deltaT"], argsAndKwargs))
+
+            else:
+                raise TypeError(f"{self.sortAfter} is not an attribute of the debugtools.tPlotArgs class!")
+        
+        if self.reverse:
+            self.plt.gca().invert_xaxis()
+        
+        if self.sortAfter is tPlotArgs.ARGS:
+            plotTuples(self.plt, tuples, f"Execution times of function {self.func.__name__}", "Args and kwargs", "ΔT")
+
+        elif self.sortAfter is tPlotArgs.TIME:
+            plotTuples(self.plt, tuples, f"Execution times of function {self.func.__name__}", "ΔT", "Args and kwargs")
+
+        else:
+            raise TypeError(f"{self.sortAfter} is not an attribute of the debugtools.tPlotArgs class!")
+        
+        self.plt.show()

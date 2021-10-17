@@ -66,11 +66,7 @@ All of the neccessary dependencies are located or imported in the `debugtools.py
   
   - `ilog`. "Info Log". Behaves largely like `log`
     First argument will be used to represent what is being logged.
-  
-  - `timer`. A simple decorator for timing the
-    execution time of a function or method.
-    Brags about the `ilog` function. (:
-  
+
   - `isFromCall`. Gets if a function with the name `funcName` is in the callstack.
     Used by `__clsRepr` to determine if it should add markers in the form of `lignSplitSign` where newlines can be added if the logging string is too long.
 
@@ -79,3 +75,29 @@ All of the neccessary dependencies are located or imported in the `debugtools.py
   - `getTerminalOutputs`. Returns the terminal output content recorded while the function was running, and the result from the function in a tuple.
     (TerminalOutput,FunctionResult)
     <span style="color:red">***WARNING: THIS FUNCTION ALLOCATES THE RESULT TO YOUR DRIVE AND NOT MEMORY. PRINTING MAY BE VERY SLOW, DO NOT EVER USE IN PRODUCTION WITH HIGH WORKLOADS.***</span>
+
+  - `timer`. A simple decorator for timing the
+    execution time of a function or method.
+    Brags about the `ilog` function. (:
+  
+  - `tPlotArgs` Enums or "Flags" to sort after the execution times of the functions or the arguments passed to the function.
+
+  - `timePlotter` Works the same way as the `timer` decorator, tho it returns an object and the decorator is the function `timePlotter.time`.
+  The major difference is the ability to plot the times on a matplotlib graph. You can sort the time or arguments with the Enums from `tPlotArgs`.
+  The reverse kwarg may only reverse the x axis.
+  The arguments or keyarguments that are supposed to be displayed on the plot have to be passed into the `trackArgs`/`trackKwargs` parameters. For args, these have to be the indicies of the argument, for kwargs the name of the keyword-argument.
+  Decorate the function to be tracked with the `timer` method, and plot them with the `show` one.
+  You may not use the same instance on multiple functions, otherwise, an error will be raised.
+
+## Chapter 2: runtime utilities
+All of the neccessary dependencies are located or imported in the `runtimetools.py` file.
+
+  - `getPath` Retrieves the path of the file it has been called in. Returns a `Path` object from the built-in `pathlib` module.
+
+  - `globaliseAllSubitems` Adds all the subitems of a module or folder containing a `__init__.py` file to the global scope, do not ever use this function if you are not desperate, the IDE wont recognise its behaviour.
+
+  - `execWithExcTb` Extends the built-in `exec` function, tho shows the exceptions when one is raised, with the appropriate format.
+
+  - `castToTypeHint` <span style="color:red">***NOT IMPLEMENTED COMPLETELY YET.***</span>
+
+  - `safeIter` Allows iteration and removal of items inside the iterable simultaneously.
