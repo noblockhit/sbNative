@@ -23,6 +23,7 @@ prevLogInfo = {
     "separator": None,
     "end": None,
     "args": [],
+    "kwargs": {},
     "fileName": None,
     "lineNumber": None
 }
@@ -50,12 +51,13 @@ def switchTerminalStacking() -> bool:
     return terminalStacking
 
 
-def computeLinebreakIndents(args: object, indentStartEnd: typing.Union[str, typing.Sequence[typing.Tuple[str, str]]] = None) -> list:
+def computeLinebreakIndents(args: object, kwargs, indentStartEnd: typing.Union[str, typing.Sequence[typing.Tuple[str, str]]] = None) -> list:
     '''
     Used for clean representation of e.g. Lists (indentStartEnd = "[]") if multiple lines are necessary.
     If `indentStartEnd` is `None` all the arguments will be combined to a list of newlines.
     IndentStartEnd must be a 2 item sequence of single characters. Multi Character support might be supported in the future.
     '''
+    args = args + tuple([f"{k} = {v}" for k,v in kwargs.items()])
     ret = []
 
     currIndentLvl = 0
@@ -83,7 +85,8 @@ def __baseLoggingFunc(
         separator: str,
         maxOccupyableWidthPortion: float,
         end: str,
-        *args: object) -> None:
+        *args: object,
+        **kwargs) -> None:
     '''
     This is the base of the logging function,
     like `log` and `ilog` (infolog). It is almost redundant to use this,
@@ -104,6 +107,7 @@ def __baseLoggingFunc(
             "separator": separator,
             "end": end,
             "args": args,
+            "kwargs": kwargs,
             "fileName": fileName,
             "lineNumber": lineNumber
         }
@@ -126,7 +130,7 @@ def __baseLoggingFunc(
     else:
         logString = f"LOG: "
 
-    argStrings = computeLinebreakIndents(args)
+    argStrings = computeLinebreakIndents(args, kwargs)
     consoleWidth = os.get_terminal_size()[0]
     occupiedLogLength = sum([len(s)+len(separator)
                             for s in argStrings])-len(separator)
@@ -135,9 +139,9 @@ def __baseLoggingFunc(
         separator = "\n"
         logString += "\n"
         arrow = "\n" + arrow[1:]
-        argStrings = computeLinebreakIndents(args, "()")
-        argStrings = computeLinebreakIndents(argStrings, "[]")
-        argStrings = computeLinebreakIndents(argStrings, "{}")
+        argStrings = computeLinebreakIndents(args, kwargs, indentStartEnd="()")
+        argStrings = computeLinebreakIndents(argStrings, kwargs, indentStartEnd="[]")
+        argStrings = computeLinebreakIndents(argStrings, kwargs, indentStartEnd="{}")
 
     argStr = separator.join(argStrings).replace(lineSplitSign, "")
 
@@ -150,20 +154,20 @@ def __baseLoggingFunc(
         print(logString)
 
 
-def log(*args: object, depth: int = 2) -> None:
+def log(*args: object, depth: int = 2, **kwargs) -> None:
     '''
     Prints all the arguments given to the console and the file + line of the call.
     Supports more advanced logging when paired with the `cleanRepr` class decorator.
     '''
-    __baseLoggingFunc(None, depth, " | ", .9, "", *args)
+    __baseLoggingFunc(None, depth, " | ", .9, "", *args, **kwargs)
 
 
-def ilog(info: object, *args: object, depth: int = 2, end: str = "") -> None:
+def ilog(info: object, *args: object, depth: int = 2, end: str = "", **kwargs) -> None:
     '''
     Prints all the arguments given to the console and the file + line of the call.
     First argument will be used to represent what is logged. Supports more advanced logging when paired with the `cleanRepr` class decorator.
     '''
-    __baseLoggingFunc(info, depth, " | ", .9, end, *args)
+    __baseLoggingFunc(info, depth, " | ", .9, end, *args, **kwargs)
 
 
 def __clsRepr(cls: type) -> type:
@@ -181,7 +185,7 @@ def __clsRepr(cls: type) -> type:
         if k in cls.__excludeReprVarNames__:
             continue
 
-        ret += f"{repr(k)}: {repr(v)}, "
+        ret += f"{repr(k)} = {repr(v)}, "
         if isLogCall:
             ret += lineSplitSign
 
