@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html>
+    <header>
+        <!-- <script
+            type="text/javascript"
+            src="https://livejs.com/live.js"
+        ></script> -->
+    </header>
+    <style>
+        html {
+            height: 100%;
+            width: 100%;
+        }
+        body {
+            height: 100%;
+            width: 100%;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            background-color: black;
+            min-width: 100px;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 5px;
+
+            position: absolute;
+            z-index: 1;
+            transform: translateX(10px) translateY(10px);
+        }
+
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+        }
+
+        .bottomvalue {
+            position: relative;
+            width: 10%;
+            text-align: center;
+        }
+        .bottomvalue p {
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+        .bottomvalues {
+            padding: 0;
+        }
+
+        .graph-container {
+            position: absolute;
+            width: 80%;
+            height: 80%;
+            background-color: rgb(189, 189, 189);
+            margin: 5% 10%;
+            padding-right: 20px;
+        }
+
+        .graph-container table {
+            transform: translateY(-100%);
+        }
+
+        .graph-container .graph-dots {
+            width: 10px;
+            height: 10px;
+            border-radius: 5px;
+            background-color: blue;
+        }
+        .graph-container table {
+            border-spacing: 0;
+            height: 100%;
+            width: 100%;
+            transform: translateY(100%);
+        }
+        .graph-container table thread {
+            position: absolute;
+        }
+        .graph-container table tbody {
+            position: absolute;
+        }
+        .bottomvalues p {
+            display: inline-block;
+        }
+        .X,
+        .Y {
+            width: 0;
+            height: 0;
+            z-index: 1;
+        }
+        .Y {
+            transform: translateY(-100%);
+        }
+        .X p {
+            margin: 0;
+        }
+        .Y p {
+            text-align: left;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <body>
+        <div class="graph-container">
+            <table>
+                <thread>
+                    <tr>
+                        <th></th>
+                    </tr>
+                </thread>
+                <tbody class="bottomvalues">
+                    
+                    <td class="tooltip bottomvalue">
+                        <div class="tooltip X">
+                            <p>0.0</p>
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+
+                        <div class="tooltip Y">
+                            <p>(14,)</p>
+                            <span class="tooltiptext"> (14,) </span>
+                        </div>
+
+                        <div class="tooltip graph-dots">
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+                    </td>
+                    
+
+                    <td class="tooltip bottomvalue">
+                        <div class="tooltip X">
+                            <p>0.0</p>
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+
+                        <div class="tooltip Y">
+                            <p>(15,)</p>
+                            <span class="tooltiptext"> (15,) </span>
+                        </div>
+
+                        <div class="tooltip graph-dots">
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+                    </td>
+                    
+
+                    <td class="tooltip bottomvalue">
+                        <div class="tooltip X">
+                            <p>0.0</p>
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+
+                        <div class="tooltip Y">
+                            <p>(16,)</p>
+                            <span class="tooltiptext"> (16,) </span>
+                        </div>
+
+                        <div class="tooltip graph-dots">
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+                    </td>
+                    
+
+                    <td class="tooltip bottomvalue">
+                        <div class="tooltip X">
+                            <p>0.0</p>
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+
+                        <div class="tooltip Y">
+                            <p>(17,)</p>
+                            <span class="tooltiptext"> (17,) </span>
+                        </div>
+
+                        <div class="tooltip graph-dots">
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+                    </td>
+                    
+
+                    <td class="tooltip bottomvalue">
+                        <div class="tooltip X">
+                            <p>0.0</p>
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+
+                        <div class="tooltip Y">
+                            <p>(18,)</p>
+                            <span class="tooltiptext"> (18,) </span>
+                        </div>
+
+                        <div class="tooltip graph-dots">
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+                    </td>
+                    
+
+                    <td class="tooltip bottomvalue">
+                        <div class="tooltip X">
+                            <p>0.0</p>
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+
+                        <div class="tooltip Y">
+                            <p>(19,)</p>
+                            <span class="tooltiptext"> (19,) </span>
+                        </div>
+
+                        <div class="tooltip graph-dots">
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+                    </td>
+                    
+
+                    <td class="tooltip bottomvalue">
+                        <div class="tooltip X">
+                            <p>0.0</p>
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+
+                        <div class="tooltip Y">
+                            <p>(20,)</p>
+                            <span class="tooltiptext"> (20,) </span>
+                        </div>
+
+                        <div class="tooltip graph-dots">
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+                    </td>
+                    
+
+                    <td class="tooltip bottomvalue">
+                        <div class="tooltip X">
+                            <p>0.0</p>
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+
+                        <div class="tooltip Y">
+                            <p>(21,)</p>
+                            <span class="tooltiptext"> (21,) </span>
+                        </div>
+
+                        <div class="tooltip graph-dots">
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+                    </td>
+                    
+
+                    <td class="tooltip bottomvalue">
+                        <div class="tooltip X">
+                            <p>0.0</p>
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+
+                        <div class="tooltip Y">
+                            <p>(22,)</p>
+                            <span class="tooltiptext"> (22,) </span>
+                        </div>
+
+                        <div class="tooltip graph-dots">
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+                    </td>
+                    
+
+                    <td class="tooltip bottomvalue">
+                        <div class="tooltip X">
+                            <p>0.0</p>
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+
+                        <div class="tooltip Y">
+                            <p>(23,)</p>
+                            <span class="tooltiptext"> (23,) </span>
+                        </div>
+
+                        <div class="tooltip graph-dots">
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+                    </td>
+                    
+
+                    <td class="tooltip bottomvalue">
+                        <div class="tooltip X">
+                            <p>0.0</p>
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+
+                        <div class="tooltip Y">
+                            <p>(24,)</p>
+                            <span class="tooltiptext"> (24,) </span>
+                        </div>
+
+                        <div class="tooltip graph-dots">
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+                    </td>
+                    
+
+                    <td class="tooltip bottomvalue">
+                        <div class="tooltip X">
+                            <p>0.0</p>
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+
+                        <div class="tooltip Y">
+                            <p>(25,)</p>
+                            <span class="tooltiptext"> (25,) </span>
+                        </div>
+
+                        <div class="tooltip graph-dots">
+                            <span class="tooltiptext"> 0.0 </span>
+                        </div>
+                    </td>
+                    
+                </tbody>
+            </table>
+        </div>
+    </body>
+
+    <script>
+        function getOffset(el) {
+            var rect = el.getBoundingClientRect();
+            return {
+                left: rect.left + window.pageXOffset,
+                top: rect.top + window.pageYOffset,
+                width: rect.width || el.offsetWidth,
+                height: rect.height || el.offsetHeight,
+            };
+        }
+
+        function connect(div1, div2, color, thickness) {
+            var off1 = getOffset(div1);
+            var off2 = getOffset(div2);
+
+            var x1 = off1.left + off1.width * 0.5;
+            var y1 = off1.top + off1.height * 0.5;
+
+            var x2 = off2.left + off2.width * 0.5;
+            var y2 = off2.top + off1.height * 0.5;
+
+            var length = Math.sqrt(
+                (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1)
+            );
+
+            var cx = (x1 + x2) / 2 - length / 2;
+            var cy = (y1 + y2) / 2 - thickness / 2;
+
+            var angle = Math.atan2(y1 - y2, x1 - x2) * (180 / Math.PI);
+
+            $(div1).append(
+                `<div class="connecting-line" style="position: relative; top: ${
+                    off1.height * 0.5 - thickness * 0.5
+                }px; left: ${
+                    off1.width * 0.5
+                }px; width: ${length}px; height: ${thickness}px; transform: rotateZ(${
+                    (angle + 180) % 360
+                }deg); background-color: blue; transform-origin: 0% 0%;"></div>`
+            );
+        }
+
+        function getTextWidth(text, font) {
+            // re-use canvas object for better performance
+            const canvas =
+                getTextWidth.canvas ||
+                (getTextWidth.canvas = document.createElement("canvas"));
+            const context = canvas.getContext("2d");
+            context.font = font;
+            const metrics = context.measureText(text);
+            return metrics.width;
+        }
+
+        function getCssStyle(element, prop) {
+            return window
+                .getComputedStyle(element, null)
+                .getPropertyValue(prop);
+        }
+
+        function getCanvasFontSize(el = document.body) {
+            const fontWeight = getCssStyle(el, "font-weight") || "normal";
+            const fontSize = getCssStyle(el, "font-size") || "16px";
+            const fontFamily =
+                getCssStyle(el, "font-family") || "Times New Roman";
+
+            return `${fontWeight} ${fontSize} ${fontFamily}`;
+        }
+
+        function isNumeric(str) {
+            if (typeof str != "string") return false;
+
+            return !isNaN(str) && !isNaN(parseFloat(str));
+        }
+
+        function arangeTableContents(a, b) {
+            var aContent = a.getElementsByTagName("p")[0].innerHTML;
+            var bContent = b.getElementsByTagName("p")[0].innerHTML;
+
+            if (aContent == bContent) {
+                return 0;
+            } else if (aContent > bContent) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+
+        function drawGraph(table, update = false) {
+            var tbody = table.find("tbody");
+
+            var tableElements = $(tbody.find("td"));
+
+            var allXNumeric = true;
+            var allYNumeric = true;
+            tableElements.each(function (idx) {
+                if (
+                    !isNumeric(
+                        tableElements[idx].getElementsByTagName("p")[0]
+                            .innerHTML
+                    )
+                ) {
+                    allXNumeric = false;
+                }
+                if (
+                    !isNumeric(
+                        tableElements[idx].getElementsByTagName("p")[1]
+                            .innerHTML
+                    )
+                ) {
+                    allYNumeric = false;
+                }
+            });
+
+            var width = table.width();
+            var height = table.height();
+            if (allXNumeric) {
+                var maxValue = null;
+                tableElements.each(function (idx) {
+                    var tbl = tableElements[idx];
+                    var val = parseFloat(
+                        tbl.getElementsByTagName("p")[0].innerHTML
+                    );
+                    if (maxValue === null || val > maxValue) {
+                        maxValue = val;
+                    }
+                });
+
+                tableElements.each(function (idx) {
+                    var elm = tableElements[idx];
+                    var idxContent = elm.getElementsByTagName("p")[0].innerHTML;
+                    var portion = maxValue / parseFloat(idxContent);
+                    $(elm).css("position", "absolute");
+                    if (isNaN(width / portion)) {
+                        portion = tableElements.length / idx 
+                    }
+                    $(elm).css("margin-left", width / portion);
+                });
+            } else {
+                tableElements.each(function (idx) {
+                    var elm = tableElements[idx];
+                    var margin = (width / (tableElements.length - 1)) * idx;
+                    $(elm).css("position", "absolute");
+                    $(elm).css("margin-left", margin);
+                });
+            }
+
+            var maxValue = null;
+            tableElements.each(function (idx) {
+                var tbl = tableElements[idx];
+                var val = parseFloat(
+                    tbl.getElementsByTagName("p")[1].innerHTML
+                );
+                if (!isNumeric(val)) {
+                    val = idx+1;
+                }
+                if (maxValue === null || val > maxValue) {
+                    maxValue = val;
+                }
+            });
+
+            tableElements.each(function (idx) {
+                var elm = tableElements[idx];
+                var idxContent = elm.getElementsByTagName("p")[1].innerHTML;
+                if (!isNumeric(idxContent)) {
+                    idxContent = (idx + 1).toString();
+                }
+                var portion = maxValue / parseFloat(idxContent);
+
+                $(elm.getElementsByTagName("div")[2]).css(
+                    "position",
+                    "absolute"
+                );
+                $(elm.getElementsByTagName("div")[2]).css(
+                    "margin-top",
+                    -height / portion
+                );
+
+                $(elm.getElementsByTagName("p")[1]).css("position", "absolute");
+                $(elm.getElementsByTagName("p")[1]).css(
+                    "margin-top",
+                    -height / portion
+                );
+                $(elm.getElementsByTagName("p")[1]).css(
+                    "transform",
+                    "translate(" +
+                        (-5 -
+                            getTextWidth(
+                                idxContent,
+                                getCanvasFontSize(
+                                    elm.getElementsByTagName("p")[1]
+                                )
+                            ) -
+                            parseInt($(elm).css("margin-left"))) +
+                        "px)"
+                );
+
+                $(elm.getElementsByTagName("span")[1]).css(
+                    "position",
+                    "absolute"
+                );
+                $(elm.getElementsByTagName("span")[1]).css(
+                    "margin-top",
+                    -height / portion
+                );
+                $(elm.getElementsByTagName("span")[1]).css(
+                    "transform",
+                    "translate(" +
+                        (-20 - parseInt($(elm).css("margin-left"))) +
+                        "px)"
+                );
+            });
+
+            tableElements.each(function (idx) {
+                var tbl1 = tableElements[idx];
+                var tbl2 = tableElements[idx + 1];
+                if (idx + 1 < tableElements.length) {
+                    var div1 = tbl1.getElementsByClassName("graph-dots")[0];
+                    var div2 = tbl2.getElementsByClassName("graph-dots")[0];
+
+                    if (update) {
+                        var elements =
+                            div1.getElementsByClassName("connecting-line");
+                        while (elements[0]) {
+                            elements[0].parentNode.removeChild(elements[0]);
+                        }
+                    }
+                    connect(div1, div2, "black", 1);
+                }
+            });
+        }
+
+        function wrappedDrawGraph() {
+            drawGraph($(".graph-container table"), (update = true));
+        }
+        drawGraph($(".graph-container table"));
+        window.onresize = wrappedDrawGraph;
+    </script>
+</html>

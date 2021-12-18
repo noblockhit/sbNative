@@ -1,7 +1,21 @@
+.gitignore
 LICENSE
 README.md
 pyproject.toml
 setup.cfg
+upload.bat
+dist/sbNative-0.0.3-py3-none-any.whl
+dist/sbNative-0.0.3.tar.gz
+dist/sbNative-0.0.4-py3-none-any.whl
+dist/sbNative-0.0.4.tar.gz
+dist/sbNative-0.0.5-py3-none-any.whl
+dist/sbNative-0.0.5.tar.gz
+dist/sbNative-0.0.6-py3-none-any.whl
+dist/sbNative-0.0.6.tar.gz
+dist/sbNative-0.0.8-py3-none-any.whl
+dist/sbNative-0.0.8.tar.gz
+dist/sbNative-0.0.9-py3-none-any.whl
+dist/sbNative-0.0.9.tar.gz
 src/sbNative/__init__.py
 src/sbNative/debugtools.py
 src/sbNative/runtimetools.py
@@ -9,4 +23,5 @@ src/sbNative.egg-info/PKG-INFO
 src/sbNative.egg-info/SOURCES.txt
 src/sbNative.egg-info/dependency_links.txt
 src/sbNative.egg-info/top_level.txt
+src/test/currTest.py
 test/testFoo.py

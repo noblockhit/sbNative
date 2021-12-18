@@ -101,3 +101,27 @@ All of the neccessary dependencies are located or imported in the `runtimetools.
   - `castToTypeHint` <span style="color:red">***NOT IMPLEMENTED COMPLETELY YET.***</span>
 
   - `safeIter` Allows iteration and removal of items inside the iterable simultaneously.
+
+  - `bidirectionalDict` One may get the original key by the values, like in {"Richard":["Rick","Dick"]}
+    Using indexing or attribute getter with "Richard", "Rick" or "Dick" here will return "Richard"
+    When a value is given and whilst not contained in the dict, a KeyError will be risen.
+    Full Ex: 
+    ```python
+    d = runtimetools.bidirectionalDict(
+        Richard = ["Dick", "Rick"],
+        Annamarie = ["Marie", "Anna", "Ann"]
+    )
+
+    print(d.Richard, d["Richard"])
+    print(d.Rick, d["Rick"])
+    print(d.Dick, d["Dick"])
+
+    print(d.Annamarie, d["Annamarie"])
+    print(d.Marie, d["Marie"])
+    print(d.Anna, d["Anna"])
+    print(d.Ann, d["Ann"])
+    ```
+
+  - `LanguageFormatter` Used to format information from a program readable structure to a more easily human readable format. All of these methods are static.
+
+    - `enumerateCollection` Takes a collection like a list, tuple or anything else with a join method and converts the contents into a human readable enumeration.

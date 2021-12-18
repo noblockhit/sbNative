@@ -6,6 +6,8 @@ import atexit
 import typing
 import itertools
 from enum import Enum
+from runtimetools import getPath
+import webbrowser
 
 
 global terminalStacking
@@ -20,7 +22,6 @@ lineSplitSign = "\uF8FF"
 prevLogInfo = {
     "infoName": None,
     "tracebackDepth": None,
-    "separator": None,
     "end": None,
     "args": [],
     "kwargs": {},
@@ -51,38 +52,55 @@ def switchTerminalStacking() -> bool:
     return terminalStacking
 
 
-def computeLinebreakIndents(args: object, kwargs, indentStartEnd: typing.Union[str, typing.Sequence[typing.Tuple[str, str]]] = None) -> list:
-    '''
-    Used for clean representation of e.g. Lists (indentStartEnd = "[]") if multiple lines are necessary.
-    If `indentStartEnd` is `None` all the arguments will be combined to a list of newlines.
-    IndentStartEnd must be a 2 item sequence of single characters. Multi Character support might be supported in the future.
-    '''
-    args = args + tuple([f"{k} = {v}" for k,v in kwargs.items()])
+def formatDictToEqualSigns(d):
     ret = []
-
-    currIndentLvl = 0
-
-    if indentStartEnd:
-        srt, end = indentStartEnd
-        for a in args:
-            lnsUnsplitted = str(a).replace(
-                srt, srt + lineSplitSign).replace(end, lineSplitSign + end).replace(end + ", ", end + f",{lineSplitSign}")
-            lines = lnsUnsplitted.split(lineSplitSign)
-            for l in lines:
-                currIndentLvl -= l.count(end) * 4
-                ret.append(" " * currIndentLvl + l)
-                currIndentLvl += l.count(srt) * 4
-
-    else:
-        for a in args:
-            ret += [str(a)]
+    for k, v in d.items():
+        if isinstance(v, dict):
+            ret.append(f"{k} = {tuple(formatDictToEqualSigns(v))}")
+        else:
+            ret.append(f"{k} = {v}")
     return ret
+
+
+def computeLineBreakIndents(args: tuple, kwargs: dict, indentStartEnd=["()", "[]", "{}"], isOverflow=False) -> list:
+
+    args = tuple(map(str, tuple(args) + tuple(formatDictToEqualSigns(kwargs))))
+
+    if not isOverflow:
+        return "(" + f", ".join(args) + f")"
+
+    contentStr = f"({lineSplitSign}" + \
+        f", {lineSplitSign}".join(args) + f"{lineSplitSign})"
+    contentStr = contentStr.replace(lineSplitSign, "\n")
+
+    INDENTLVL = 4
+    OPENERS = [i[0] for i in indentStartEnd]
+    ENDERS = [i[1] for i in indentStartEnd]
+
+    currIndent = 0
+    indentStack = ""
+    newContentStr = ""
+
+    for idx, c in enumerate(contentStr):
+        if c in OPENERS and len(contentStr) > idx+1 and contentStr[idx+1] in [lineSplitSign, "\n"]:
+            currIndent += 1
+            indentStack += c
+
+        elif c in ENDERS and len(indentStack) > 0 and idx > 2 and (contentStr[idx-1] in [lineSplitSign, "\n"]) and OPENERS[ENDERS.index(c)] == indentStack[-1]:
+            currIndent -= 1
+            indentStack = indentStack[:-1]
+            newContentStr = newContentStr[:-INDENTLVL]
+
+        newContentStr += c
+        if c in [lineSplitSign, "\n"]:
+            newContentStr += " " * (currIndent * INDENTLVL)
+
+    return newContentStr
 
 
 def __baseLoggingFunc(
         infoName: typing.Union[str, None],
         tracebackDepth: int,
-        separator: str,
         maxOccupyableWidthPortion: float,
         end: str,
         *args: object,
@@ -104,7 +122,6 @@ def __baseLoggingFunc(
         currLogInfo = {
             "infoName": infoName,
             "tracebackDepth": tracebackDepth,
-            "separator": separator,
             "end": end,
             "args": args,
             "kwargs": kwargs,
@@ -129,21 +146,14 @@ def __baseLoggingFunc(
         logString = f"LOG ({repr(infoName)}): "
     else:
         logString = f"LOG: "
-
-    argStrings = computeLinebreakIndents(args, kwargs)
+    argStr = computeLineBreakIndents(args, kwargs)
     consoleWidth = os.get_terminal_size()[0]
-    occupiedLogLength = sum([len(s)+len(separator)
-                            for s in argStrings])-len(separator)
+    occupiedLogLength = len(argStr)
 
     if occupiedLogLength+len(path)+len(arrow)+len(logString)+len(end) > consoleWidth*maxOccupyableWidthPortion:
-        separator = "\n"
         logString += "\n"
         arrow = "\n" + arrow[1:]
-        argStrings = computeLinebreakIndents(args, kwargs, indentStartEnd="()")
-        argStrings = computeLinebreakIndents(argStrings, kwargs, indentStartEnd="[]")
-        argStrings = computeLinebreakIndents(argStrings, kwargs, indentStartEnd="{}")
-
-    argStr = separator.join(argStrings).replace(lineSplitSign, "")
+        argStr = computeLineBreakIndents(args, kwargs, isOverflow=True)
 
     logString += f"{argStr}{end}{arrow}{path}"
 
@@ -159,7 +169,7 @@ def log(*args: object, depth: int = 2, **kwargs) -> None:
     Prints all the arguments given to the console and the file + line of the call.
     Supports more advanced logging when paired with the `cleanRepr` class decorator.
     '''
-    __baseLoggingFunc(None, depth, " | ", .9, "", *args, **kwargs)
+    __baseLoggingFunc(None, depth, .9, "", *args, **kwargs)
 
 
 def ilog(info: object, *args: object, depth: int = 2, end: str = "", **kwargs) -> None:
@@ -167,7 +177,7 @@ def ilog(info: object, *args: object, depth: int = 2, end: str = "", **kwargs) -
     Prints all the arguments given to the console and the file + line of the call.
     First argument will be used to represent what is logged. Supports more advanced logging when paired with the `cleanRepr` class decorator.
     '''
-    __baseLoggingFunc(info, depth, " | ", .9, end, *args, **kwargs)
+    __baseLoggingFunc(info, depth, .9, end, *args, **kwargs)
 
 
 def __clsRepr(cls: type) -> type:
@@ -176,7 +186,7 @@ def __clsRepr(cls: type) -> type:
     Supports newlines with the logging functions.
     '''
     isLogCall = isFromCall("log")
-    ret = f"{type(cls).__name__}("
+    ret = f"{type(cls).__name__}({lineSplitSign}"
 
     subObjects = {**cls.__dict__, **{name: classAttr for name, classAttr in type(
         cls).__dict__.items() if not callable(classAttr) and not name.startswith("__")}}
@@ -201,7 +211,7 @@ def __clsRepr(cls: type) -> type:
 
     if remvLastChars == 0:
         return ret + ")"
-    return ret[:remvLastChars] + ")"
+    return ret[:remvLastChars] + f"{lineSplitSign})"
 
 
 def __clsLog(self, *args) -> object:
@@ -293,17 +303,12 @@ class tPlotArgs(Enum):
 
 class timePlotter:
     def __init__(self, sortAfter: typing.Union[tPlotArgs, tPlotArgs], trackArgs: typing.Sequence[int] = [], trackKwargs: typing.Sequence[str] = [], reverse=False):
-        if "matplotlib" not in sys.modules:
-            from matplotlib import pyplot as plt
-
         self.callArgsAndTimes = []
         self.sortAfter = sortAfter
         self.reverse = reverse
-        self.plt = plt
         self.func = None
         self.trackArgs = trackArgs
         self.trackKwargs = trackKwargs
-
 
     def timer(self, func: callable):
         '''
@@ -311,36 +316,40 @@ class timePlotter:
         '''
         if self.func is None:
             self.func = func
-        
+
         else:
-            if self.func is not func:
-                raise RuntimeError("You may not call different functions with the same timing instance.")        
+            raise RuntimeError(
+                "You may not decorate multiple functions with the same timing instance.")
 
         def wrapper(*args, **kwargs):
             begin = time.time()
             ret = func(*args, **kwargs)
 
             self.callArgsAndTimes.append(
-                    {"deltaT": time.time() - begin, "args": args, "kwargs": kwargs}
-                )
+                {"deltaT": 1000 * (time.time() - begin),
+                 "args": args, "kwargs": kwargs}
+            )
             return ret
 
         return wrapper
 
-
     def show(self):
         if self.func is None:
-            raise RuntimeError(f"A function was never called with this timePlotting instance.")
+            raise RuntimeError(
+                f"A function was never called with this timePlotting instance.")
 
         tuples = []
+
         for i in self.callArgsAndTimes:
             argsAndKwargs = ""
 
-            argsToPlot = tuple(a for idx,a in enumerate(i['args']) if idx in self.trackArgs)
+            argsToPlot = tuple(a for idx, a in enumerate(
+                i['args']) if idx in self.trackArgs)
             if str(argsToPlot) != "()":
                 argsAndKwargs += str(argsToPlot)
 
-            kwargsToPlot = {name:kwa for name,kwa in i['kwargs'].items() if name in self.trackKwargs}
+            kwargsToPlot = {name: kwa for name,
+                            kwa in i['kwargs'].items() if name in self.trackKwargs}
             if str(kwargsToPlot) != "{}":
                 argsAndKwargs += str(kwargsToPlot)
 
@@ -351,18 +360,51 @@ class timePlotter:
                 tuples.append((i["deltaT"], argsAndKwargs))
 
             else:
-                raise TypeError(f"{self.sortAfter} is not an attribute of the debugtools.tPlotArgs class!")
-        
-        if self.reverse:
-            self.plt.gca().invert_xaxis()
-        
-        if self.sortAfter is tPlotArgs.ARGS:
-            plotTuples(self.plt, tuples, f"Execution times of function {self.func.__name__}", "Args and kwargs", "ΔT")
+                raise TypeError(
+                    f"{self.sortAfter} is not an attribute of the debugtools.tPlotArgs class!")
 
-        elif self.sortAfter is tPlotArgs.TIME:
-            plotTuples(self.plt, tuples, f"Execution times of function {self.func.__name__}", "ΔT", "Args and kwargs")
+        with open(getPath().joinpath("templates").joinpath("graphTemplate.html"), "r") as rf:
+            htmlTemplate = rf.read()
+            htmlTemplate = self.inject(htmlTemplate, tuples)
+        self.displayGraph(htmlTemplate)
 
-        else:
-            raise TypeError(f"{self.sortAfter} is not an attribute of the debugtools.tPlotArgs class!")
-        
-        self.plt.show()
+    def inject(self, htmlTemplate, values):
+        beginIdx = htmlTemplate.find("{BEGIN-TBL-ELM}")
+        tblElm = htmlTemplate[beginIdx +
+                              len("{BEGIN-TBL-ELM}"):htmlTemplate.find("{END-TBL-ELM}")]
+
+        elements = []
+        for x, y in values:
+            elements.append(
+                tblElm.replace("{XVALUE}", str(x)).replace("{YVALUE}", str(y))
+            )
+
+        htmlTemplate = htmlTemplate.replace(tblElm, "\n".join(elements))
+
+        return htmlTemplate.replace("{BEGIN-TBL-ELM}", "").replace("{END-TBL-ELM}", "")
+
+    def displayGraph(self, htmlContent):
+        with open(f"{str(getPath())}/temp/graphdisplay.html", 'w') as f:
+            f.write(htmlContent)
+
+            filename = f"file:///{str(getPath())}/temp/graphdisplay.html"
+            webbrowser.get().open(filename)
+
+
+if __name__ == '__main__':
+
+    @cleanRepr()
+    class SecondExCls:
+        withAnAttribute = "that is a string of second ex cls"
+
+    @cleanRepr()
+    class ExampleClass:
+        withSomeAttr = "something something"
+        another1 = "something something something something something something"
+        andALastOne = "something something something something something something something something"
+        secondExample = SecondExCls()
+
+    log(ExampleClass())
+    log("somestr", 123, 876543, 2134566.987654, 12345, 765433, 435678, 9876543,
+        3435465, 987658765, 87654329876543, 8765432897654, 1234567890, andSomeKwarg=1234)
+    log("somestr", 123, 876543, andSomeKwarg=1234)
