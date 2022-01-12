@@ -12,7 +12,7 @@ ALL NON MENTIONED RIGHTS RESERVED.
 
 
 ## Chapter 1: debugging
-All of the neccessary dependencies are located or imported in the `debugtools.py` file.
+All of the necessary dependencies are located or imported in the `debugtools.py` file.
 
   - `switchTerminalStacking`. Terminal stacking is a method for compressing logged information into a single line if possible.
     Ex: 
@@ -57,20 +57,20 @@ All of the neccessary dependencies are located or imported in the `debugtools.py
   - `log`. Prints all the arguments given to
     the console and the file + line of the call.
     Supports more advanced logging when paired with the `cleanRepr` class decorator.
-    As shown above, it also claryfies that a value has been logged. The reason for the file and line are to find it and edit/remove the logging call quickly. In many editors, (also VSCODE) you may CTRL+LEFTCLICK the line and it will redirect you to the file and corresponding line of the log call.
+    As shown above, it also claryfies that a value has been logged. Having a line at the end helps finding the log call and editing/removing it quickly. In many editors, (tested in VSCODE) you may CTRL+LEFTCLICK the line and it will redirect you to the file and corresponding line of the call.
     Ex: 
     ```
     LOG: this module should be native! --> c:/---/Desktop/test1.py:6
     ```
-    The depth parameter controls how far the lookup into the callstack watches for the filename and number after the `-->`. This is a feature for functions written by you, to redirect the user or yourself to the line your function was called at. Incrementing goes further into the callstack. Default: 2.
+    The depth parameter controls how far the lookup goes into the callstack returning the filename and number after the `-->`. This is a feature for functions written by you, to redirect the user or yourself to the line **your** function was called at. Incrementing goes further into the callstack. Default: 2.
   
-  - `ilog`. "Info Log". Behaves largely like `log`
-    First argument will be used to represent what is being logged.
+  - `ilog`. "Info Log". Behaves mainly like `log`
+    Only difference: the first argument will be used to represent what is being logged.
 
   - `isFromCall`. Gets if a function with the name `funcName` is in the callstack.
     Used by `__clsRepr` to determine if it should add markers in the form of `lignSplitSign` where newlines can be added if the logging string is too long.
 
-  - `cleanRepr`. A decorator which makes the representation of your class as clean as possible. If you don't want specific class or instance variables to be included, you may specify thier name as arguments for this function.
+  - `cleanRepr`. A decorator which makes the representation of your class as clean as possible. If you don't want specific class or instance variables to be included, you may specify their name as arguments for this function.
 
   - `getTerminalOutputs`. Returns the terminal output content recorded while the function was running, and the result from the function in a tuple.
     (TerminalOutput,FunctionResult)
@@ -78,7 +78,7 @@ All of the neccessary dependencies are located or imported in the `debugtools.py
 
   - `timer`. A simple decorator for timing the
     execution time of a function or method.
-    Brags about the `ilog` function. (:
+    Brags the `ilog` function. (:
   
   - `tPlotArgs` Enums or "Flags" to sort after the execution times of the functions or the arguments passed to the function.
 
@@ -98,7 +98,7 @@ All of the neccessary dependencies are located or imported in the `runtimetools.
 
   - `execWithExcTb` Extends the built-in `exec` function, tho shows the exceptions when one is raised, with the appropriate format.
 
-  - `castToTypeHint` <span style="color:red">***NOT IMPLEMENTED COMPLETELY YET.***</span>
+  - `runAndCast` <span style="color:red">***NOT IMPLEMENTED COMPLETELY YET.***</span>
 
   - `safeIter` Allows iteration and removal of items inside the iterable simultaneously.
 
@@ -125,3 +125,21 @@ All of the neccessary dependencies are located or imported in the `runtimetools.
   - `LanguageFormatter` Used to format information from a program readable structure to a more easily human readable format. All of these methods are static.
 
     - `enumerateCollection` Takes a collection like a list, tuple or anything else with a join method and converts the contents into a human readable enumeration.
+    
+    - `toAbbrNumber` Abbriviates an Integer or float dynamically, using k; m; b; t, by default, which can be changed accordingly to the language unsing the abbriviations kw. The maxPrecisionAmt kw indicates the amount of digits of the output precision.
+    
+    - `AbbrNumToFloat` The exact counterpart to ***toAbbrNumber***
+        WATCH OUT FOR DIFFERENCES IN THE `abbriviations` VARIABLE
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
