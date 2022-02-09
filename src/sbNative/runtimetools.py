@@ -86,7 +86,7 @@ def runAndCast(func) -> typing.Tuple[typing.Callable, list, dict]:
             if not isinstance(cls, inspect.Parameter):
                 try:
                     argVal = cls(argVal)
-                except Exception as e:
+                except Exception as _:
                     print("----------------------------------------")
                     traceback.print_exc()
                     print("----------------------------------------")
@@ -169,6 +169,33 @@ class LanguageFormatter:
             number *= (10**abbriviations[abbr])
         return number
 
+    @staticmethod
+    def toAbbrWord(word, hard=True, rmStrings="aeiouyäöü"):
+        '''When using hard, all the non important characters/strings (usually vowels) will be removed, regardless of repetition or position'''
+        if hard:
+            return word.translate({ord(c): None for c in rmStrings})
+        if len(word) <= 4:
+            return word
+        
+        ret = ""
+        for i in range(len(word)):
+            end = i+1 == len(word)
+            if not end:
+                rmNext = word[i+1] in rmStrings
+            else:
+                rmNext = False
+            if word[i] in rmStrings and not rmNext and i > 0:
+                continue
+            
+            ret += word[i]
+            if rmNext and word[i] in rmStrings:
+                ret += word[i+1]
+                
+        return ret
+
+    @staticmethod
+    def toAbbrSentence(sentence, hard=True, rmStrings="aeiouyäöü"):
+        return " ".join([LanguageFormatter.toAbbrWord(word, hard, rmStrings) for word in sentence.split(" ")])
 
 if __name__ == "__main__":
     # tests = {17_234_000_000, 17_234_000_000.5235, 1_234_567_000, 1_234_567_000.5678, 234_567_000, 234_567_000.52348}
@@ -176,7 +203,4 @@ if __name__ == "__main__":
     #     for p in range(1, 7):
     #         print(LanguageFormatter.toAbbrNumber(i, p), end = " | ")
     #     print("---")
-
-    print(LanguageFormatter.enumerateCollection(["alex","richard","cajetan","hanna(h)","ben"], lastSeparator=" und ") + " sind alle behindert!")
-
-    print(LanguageFormatter.AbbrNumToFloat(LanguageFormatter.toAbbrNumber(17_234_000_000.5235, 3)))
+    print(LanguageFormatter.toAbbrSentence("Please only use this carefully, it might screw up some text and make it way too hard to read, if you are not too sure wether this is suitable, definetly disable the \"h a r d\" keyword.", hard=False))
