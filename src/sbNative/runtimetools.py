@@ -203,4 +203,4 @@ if __name__ == "__main__":
     #     for p in range(1, 7):
     #         print(LanguageFormatter.toAbbrNumber(i, p), end = " | ")
     #     print("---")
-    print(LanguageFormatter.toAbbrSentence("Please only use this carefully, it might screw up some text and make it way too hard to read, if you are not too sure wether this is suitable, definetly disable the \"h a r d\" keyword.", hard=False))
+    print(LanguageFormatter.toAbbrSentence("Please only use this carefully, it might screw up some text and make it way too hard to read, if you are not too sure whether this is suitable, definetly disable the \"h a r d\" keyword.", hard=False))
