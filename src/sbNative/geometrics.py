@@ -8,7 +8,8 @@ class Point:
         for n, v in self.pair_axis_names_to_values(values):
             self.__setattr__(n, v)
 
-    def pair_axis_names_to_values(self, values):
+    @staticmethod
+    def pair_axis_names_to_values(values):
         if len(values) < 5:
             axis = "xyzw"
         else:
@@ -22,4 +23,3 @@ class Point:
                     axis[i] = F"{axis[i][0]}{middle}{axis[i][-1]}"
 
         return zip(axis[:len(values)], values)
-
