@@ -5,7 +5,8 @@ Summary: A package for all things that should be native
 Home-page: https://pypi.org/project/sbNative/
 Author: RICHARD_GALFI
 Author-email: richardgalfi@gmail.com
-Keywords: example documentation tutorial
+Keywords: debugging, native, python, extension, development, tools
+Requires-Python: >=3.7
 Description-Content-Type: text/markdown
 
 # SbNative
