@@ -11,26 +11,29 @@ SETTINGS = {
 
 
 def _post_install():
-    import appdirs
-    import yaml
+    try:
+        import appdirs
+        import yaml
 
-    d = pathlib.Path(appdirs.user_config_dir(NAME, AUTHOR))
-    if not os.path.isdir(d):
-        os.makedirs(d)
+        d = pathlib.Path(appdirs.user_config_dir(NAME, AUTHOR))
+        if not os.path.isdir(d):
+            os.makedirs(d)
 
-    filename = "SB_NATIVE_CONFIG.yaml"
-    filepath = d.joinpath(filename)
-    if filename not in os.listdir(d):
-        with open(d.joinpath(filepath), "w") as stream:
-            yaml.dump(SETTINGS, stream)
+        filename = "SB_NATIVE_CONFIG.yaml"
+        filepath = d.joinpath(filename)
+        if filename not in os.listdir(d):
+            with open(d.joinpath(filepath), "w") as stream:
+                yaml.dump(SETTINGS, stream)
 
-    if platform.system() == 'Darwin':  # macOS
-        subprocess.call(('open', str(filepath)))
-    elif platform.system() == 'Windows':  # Windows
-        os.startfile(str(filepath))
-    else:  # linux variants
-        subprocess.call(('xdg-open', str(filepath)))
-
+        if platform.system() == 'Darwin':  # macOS
+            subprocess.call(('open', str(filepath)))
+        elif platform.system() == 'Windows':  # Windows
+            os.startfile(str(filepath))
+        else:  # linux variants
+            subprocess.call(('xdg-open', str(filepath)))
+    except ImportError:
+        print("appdirs and PyYAML are required for this to work, skipping for now")
+        return
 
 class NewInstall(install):
     def __init__(self, *args, **kwargs):
@@ -47,7 +50,7 @@ NAME = "sbNative"
 
 setup(
     name=NAME,
-    version="0.0.15",
+    version="0.0.17",
     author=AUTHOR,
     author_email="richardgalfi@gmail.com",
     description="A package for all things that should be native",

@@ -1,12 +1,14 @@
 Metadata-Version: 2.1
 Name: sbNative
-Version: 0.0.15
+Version: 0.0.16
 Summary: A package for all things that should be native
 Home-page: https://pypi.org/project/sbNative/
 Author: RICHARD_GALFI
 Author-email: richardgalfi@gmail.com
 Keywords: example documentation tutorial
 Description-Content-Type: text/markdown
+Requires-Dist: appdirs
+Requires-Dist: PyYAML
 
 # SbNative
 An extention to python for debugging and such. Things that, well `Should Be Native`
