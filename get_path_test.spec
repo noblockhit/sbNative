@@ -2,7 +2,7 @@
 
 
 a = Analysis(
-    ['src\\test\\get_path_tests\\get_path_test.py'],
+    ['src/test/get_path_tests/get_path_test.py'],
     pathex=[],
     binaries=[],
     datas=[],

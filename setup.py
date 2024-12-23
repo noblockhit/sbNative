@@ -50,7 +50,7 @@ NAME = "sbNative"
 
 setup(
     name=NAME,
-    version="0.0.17",
+    version="0.0.17-2",
     author=AUTHOR,
     author_email="richardgalfi@gmail.com",
     description="A package for all things that should be native",

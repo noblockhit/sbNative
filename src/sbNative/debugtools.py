@@ -7,7 +7,10 @@ import atexit
 import typing
 import itertools
 from enum import Enum
-from runtimetools import get_path
+try:
+    from .runtimetools import get_path
+except ImportError:
+    from runtimetools import get_path
 import webbrowser
 
 

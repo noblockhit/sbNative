@@ -9,3 +9,4 @@ src/sbNative/__init__.py
 src/sbNative/debugtools.py
 src/sbNative/geometrics.py
 src/sbNative/runtimetools.py
+src/sbNative/sbNative.py
