@@ -6,14 +6,22 @@ import traceback
 import typing
 import types
 
+def is_running_as_executable() -> bool:
+    # Check for the PyInstaller temp folder
+    if hasattr(sys, '_MEIPASS'):
+        return True
+    return False
 
-def get_path() -> pathlib.Path:
-    if sys.executable.endswith("python.exe"):
-        fl = inspect.stack()[1].filename
-        return pathlib.Path(os.path.dirname(os.path.realpath(fl).replace("\\", "/")))
-    else:
-        return pathlib.Path(sys.executable.replace(sys.executable.split("\\")[-1], "").replace("\\", "/")[:-1])
-
+def get_path(depth: int = 1) -> pathlib.Path:
+    if not is_running_as_executable(): 
+        ## regular case, non compiled
+        fl = inspect.stack()[depth].filename ## not equal to __file__. __file__ points to this file (runtimetools) but this line fetches the file of the caller
+        return pathlib.Path(os.path.dirname(fl))
+    
+    # if compiled
+    executable_path = pathlib.Path(sys.executable)
+    return pathlib.Path(executable_path).parent
+    
 
 def globalise_all_sub_items(dest_file_globals, package_to_unpack, force_all=False) -> None:
     for name, g in inspect.getmembers(package_to_unpack):

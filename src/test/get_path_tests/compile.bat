@@ -1,0 +1,1 @@
+pyinstaller ./src/test/get_path_tests/get_path_test.py --onefile --clean --hidden-import=webbrowser --distpath ./src/test/get_path_tests
